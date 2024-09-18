@@ -1,5 +1,5 @@
 /** @format */
-
+import "./globals.css";
 import AppWalletProvider from "./components/AppWalletProvider";
 
 export default function RootLayout({
