@@ -1,6 +1,8 @@
 /** @format */
+"use client";
 import "./globals.css";
 import AppWalletProvider from "./components/AppWalletProvider";
+import { AppContextProvider } from "./context/AppContextProvider";
 
 export default function RootLayout({
   children,
@@ -10,7 +12,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppWalletProvider>{children}</AppWalletProvider>
+        <AppWalletProvider>
+          <AppContextProvider>{children}</AppContextProvider>
+        </AppWalletProvider>
       </body>
     </html>
   );
