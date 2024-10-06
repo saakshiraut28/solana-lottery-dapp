@@ -1,7 +1,7 @@
 /** @format */
 "use client";
 import "./globals.css";
-import AppWalletProvider from "./components/AppWalletProvider";
+import AppWalletProvider from "./context/AppWalletProvider";
 import { AppContextProvider } from "./context/AppContextProvider";
 
 export default function RootLayout({

@@ -1,1 +1,423 @@
-{"version":"0.1.0","name":"lottery","instructions":[{"name":"initializeMaster","accounts":[{"name":"master","isMut":true,"isSigner":false},{"name":"payer","isMut":true,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[]},{"name":"createLottery","accounts":[{"name":"lottery","isMut":true,"isSigner":false},{"name":"master","isMut":true,"isSigner":false},{"name":"authority","isMut":true,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[{"name":"ticketPrice","type":"u64"}]},{"name":"buyTicket","accounts":[{"name":"lottery","isMut":true,"isSigner":false},{"name":"ticket","isMut":true,"isSigner":false},{"name":"buyer","isMut":true,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[{"name":"lotteryId","type":"u32"}]},{"name":"pickWinner","accounts":[{"name":"lottery","isMut":true,"isSigner":false},{"name":"authority","isMut":false,"isSigner":true}],"args":[{"name":"lotteryId","type":"u32"}]},{"name":"claimPrize","accounts":[{"name":"lottery","isMut":true,"isSigner":false},{"name":"ticket","isMut":false,"isSigner":false},{"name":"authority","isMut":true,"isSigner":true},{"name":"systemProgram","isMut":false,"isSigner":false}],"args":[{"name":"lotteryId","type":"u32"},{"name":"ticketId","type":"u32"}]}],"accounts":[{"name":"Master","type":{"kind":"struct","fields":[{"name":"lastId","type":"u32"}]}},{"name":"Lottery","type":{"kind":"struct","fields":[{"name":"id","type":"u32"},{"name":"authority","type":"publicKey"},{"name":"ticketPrice","type":"u64"},{"name":"lastTicketNumber","type":"u32"},{"name":"winnerId","type":{"option":"u32"}},{"name":"claimed","type":"bool"}]}},{"name":"Ticket","type":{"kind":"struct","fields":[{"name":"id","type":"u32"},{"name":"authority","type":"publicKey"},{"name":"lotteryId","type":"u32"}]}}],"errors":[{"code":6000,"name":"WinnerAlreadyExists","msg":"Winner already exists."},{"code":6001,"name":"NoTicketsLeft","msg":"No tickets left."},{"code":6002,"name":"NoParticipants","msg":"No one has bought your ticket. Winner cannot be announced yet."},{"code":6003,"name":"NoWinner","msg":"Winner has not been chosen."},{"code":6004,"name":"InvalidWinner","msg":"Invalid Winner"},{"code":6005,"name":"LotteryClosed","msg":"The prize have been already claim"}]}
+{
+  "address": "C5txrXwL336AxDRzTwZoLEY7t21meh9qqj5S1Dzw9bpr",
+  "metadata": {
+    "name": "lottery_program",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "buy_ticket",
+      "discriminator": [
+        11,
+        24,
+        17,
+        193,
+        168,
+        116,
+        164,
+        169
+      ],
+      "accounts": [
+        {
+          "name": "lottery",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  111,
+                  116,
+                  116,
+                  101,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "lottery_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "ticket",
+          "writable": true
+        },
+        {
+          "name": "buyer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "lottery_id",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "claim_prize",
+      "discriminator": [
+        157,
+        233,
+        139,
+        121,
+        246,
+        62,
+        234,
+        235
+      ],
+      "accounts": [
+        {
+          "name": "lottery",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  111,
+                  116,
+                  116,
+                  101,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "lottery_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "ticket"
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "ticket"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "_lottery_id",
+          "type": "u32"
+        },
+        {
+          "name": "_ticket_id",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "create_lottery",
+      "discriminator": [
+        242,
+        165,
+        247,
+        119,
+        17,
+        203,
+        21,
+        42
+      ],
+      "accounts": [
+        {
+          "name": "lottery",
+          "writable": true
+        },
+        {
+          "name": "master",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  115,
+                  116,
+                  101,
+                  114
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "ticket_price",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "master",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  115,
+                  116,
+                  101,
+                  114
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "pick_winner",
+      "discriminator": [
+        227,
+        62,
+        25,
+        73,
+        132,
+        106,
+        68,
+        96
+      ],
+      "accounts": [
+        {
+          "name": "lottery",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  111,
+                  116,
+                  116,
+                  101,
+                  114,
+                  121
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "lottery_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "lottery"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "_lottery_id",
+          "type": "u32"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Lottery",
+      "discriminator": [
+        162,
+        182,
+        26,
+        12,
+        164,
+        214,
+        112,
+        3
+      ]
+    },
+    {
+      "name": "Master",
+      "discriminator": [
+        168,
+        213,
+        193,
+        12,
+        77,
+        162,
+        58,
+        235
+      ]
+    },
+    {
+      "name": "Ticket",
+      "discriminator": [
+        41,
+        228,
+        24,
+        165,
+        78,
+        90,
+        235,
+        200
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "WinnerAlreadyExists",
+      "msg": "Winner already exists."
+    },
+    {
+      "code": 6001,
+      "name": "NoTicketsLeft",
+      "msg": "No tickets left."
+    },
+    {
+      "code": 6002,
+      "name": "NoParticipants",
+      "msg": "No one has bought your ticket. Winner cannot be announced yet."
+    },
+    {
+      "code": 6003,
+      "name": "NoWinner",
+      "msg": "Winner has not been chosen."
+    },
+    {
+      "code": 6004,
+      "name": "InvalidWinner",
+      "msg": "Invalid Winner"
+    },
+    {
+      "code": 6005,
+      "name": "LotteryClosed",
+      "msg": "The prize have been already claim"
+    }
+  ],
+  "types": [
+    {
+      "name": "Lottery",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u32"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "ticket_price",
+            "type": "u64"
+          },
+          {
+            "name": "last_ticket_number",
+            "type": "u32"
+          },
+          {
+            "name": "winner_id",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "claimed",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Master",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "last_id",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Ticket",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u32"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "lottery_id",
+            "type": "u32"
+          }
+        ]
+      }
+    }
+  ]
+}
