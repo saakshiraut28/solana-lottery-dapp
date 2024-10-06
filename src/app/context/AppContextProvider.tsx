@@ -8,6 +8,7 @@ import React, {
   useState,
   useContext,
   useEffect,
+  useCallback,
 } from "react";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
@@ -19,9 +20,15 @@ import {
 } from "../utils/setup";
 import { BN } from "@coral-xyz/anchor";
 import { LotteryProgram } from "../utils/LotteryProgramType";
-import { PublicKey, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import {
+  AccountInfo,
+  PublicKey,
+  SystemProgram,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
 import bs58 from "bs58"; // Make sure bs58 is imported for encoding
 import { confirmTx } from "../utils/helper";
+import { LotteryAccount } from "../types/accounts";
 
 interface AppContextType {
   connected: boolean;
@@ -72,7 +79,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [lotteryId, setLotteryId] = useState<number>(0);
   const [lotteryPot, setLotteryPot] = useState<number | null>(null);
-  const [lottery, setLottery] = useState<any>(null); // You should replace 'any' with the appropriate lottery type
+  const [lottery, setLottery] = useState<LotteryAccount | undefined | null>();
   const [lotteryAddress, setLotteryAddress] = useState<PublicKey | null>(null);
   const [winnerId, setWinnerId] = useState<number | null>(null);
 
@@ -86,20 +93,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
     return null;
   }, [connection, wallet]);
 
-  useEffect(() => {
-    if (program) {
-      updateState();
-    }
-  }, [program]);
-
-  useEffect(() => {
-    if (lottery) {
-      getPot();
-      // Other functions like getPlayers or getHistory can be added similarly
-    }
-  }, [lottery]);
-
-  const updateState = async () => {
+  const updateState = useCallback(async () => {
     if (!program || !wallet?.publicKey) return;
     try {
       if (!masterAddress) {
@@ -143,9 +137,11 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
           }
         );
 
-        const userWin = userTickets.some((t: any) => {
-          return t.account.id === lottery.winnerId;
-        });
+        const userWin = userTickets.some(
+          (t: { pubkey: PublicKey; account: AccountInfo<Buffer> }) => {
+            return t.account.data.readUInt32LE(0) === lottery.winnerId;
+          }
+        );
 
         if (userWin) {
           setWinnerId(lottery.winnerId);
@@ -157,12 +153,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
       console.error("Error updating state:", err);
       setIsInitialized(false);
     }
-  };
-
-  const getPot = async () => {
-    const pot = getTotalPrize(lottery);
-    setLotteryPot(Number(pot));
-  };
+  }, [program, wallet, masterAddress, connection, lotteryId]);
 
   const initMaster = async () => {
     try {
@@ -178,7 +169,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
           systemProgram: SystemProgram.programId,
         })
         .rpc();
-      await confirmTx(txHash, connection);
+      if (txHash) await confirmTx(txHash, connection);
 
       updateState();
     } catch (err) {
@@ -204,7 +195,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
             systemProgram: SystemProgram.programId,
           })
           .rpc();
-        await confirmTx(txHash, connection);
+        if (txHash) await confirmTx(txHash, connection);
       }
 
       updateState();
@@ -216,7 +207,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
 
   const buyTicket = async () => {
     try {
-      if (!lotteryAddress || !wallet?.publicKey) {
+      if (!lotteryAddress || !wallet?.publicKey || !lottery) {
         console.log("Missing lotteryAddress or wallet public key");
         return;
       }
@@ -226,13 +217,13 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
           lottery: lotteryAddress,
           ticket: await getTicketAddress(
             lotteryAddress,
-            lottery.lastTicketId + 1
+            lottery?.lastTicketNumber + 1
           ),
           buyer: wallet.publicKey,
           systemProgram: SystemProgram.programId,
         })
         .rpc();
-      await confirmTx(txHash, connection);
+      if (txHash) await confirmTx(txHash, connection);
       updateState();
     } catch (err) {
       console.log("Error buying ticket:", err);
@@ -252,7 +243,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
           authority: wallet.publicKey,
         })
         .rpc();
-      await confirmTx(txHash, connection);
+      if (txHash) await confirmTx(txHash, connection);
       updateState();
     } catch (err) {
       console.log("Error picking winner:", err);
@@ -274,13 +265,30 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
           systemProgram: SystemProgram.programId,
         })
         .rpc();
-      await confirmTx(txHash, connection);
+      if (txHash) await confirmTx(txHash, connection);
       updateState();
       console.log("Prize claimed ");
     } catch (err) {
       console.log("Hum : Claim prize error in it");
     }
   };
+
+  useEffect(() => {
+    if (program) {
+      updateState();
+    }
+  }, [program, updateState]);
+
+  const getPot = useCallback(async () => {
+    if (lottery) {
+      const pot = getTotalPrize(lottery); // Ensure getTotalPrize is properly defined and imported
+      setLotteryPot(Number(pot));
+    }
+  }, [lottery]); // Dependency on lottery
+
+  useEffect(() => {
+    getPot();
+  }, [getPot]);
 
   return (
     <AppContext.Provider
@@ -295,11 +303,13 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
         lotteryAddress,
         lotteryPot,
         isLotteryAuthority:
-          wallet && lottery && wallet.publicKey.equals(lottery.authority),
+          wallet && lottery
+            ? wallet.publicKey.equals(lottery.authority)
+            : false,
         buyTicket,
         pickWinner,
-        isFinished: lottery && lottery.winnerId,
-        canClaim: lottery && !lottery.claimed && winnerId,
+        isFinished: lottery ? !!lottery.winnerId : false,
+        canClaim: lottery ? !lottery.claimed && !!winnerId : false,
         claimPrize,
       }}
     >

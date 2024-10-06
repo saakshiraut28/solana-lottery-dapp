@@ -1,5 +1,5 @@
 import { AnchorProvider, BN, Idl, Program } from "@coral-xyz/anchor";
-import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { PublicKey, LAMPORTS_PER_SOL, Connection } from "@solana/web3.js";
 import { LotteryProgram } from "./../types/programs";
 
 import IDL from "./idl.json";
@@ -9,9 +9,11 @@ import {
   PROGRAM_ID,
   TICKET_SEED,
 } from "./constants";
+import { LotteryAccount } from "../types/accounts";
+import { AnchorWallet } from "@solana/wallet-adapter-react";
 
 // How to fetch our Program
-export const getProgram = (connection: any, wallet: any) => {
+export const getProgram = (connection: Connection, wallet: AnchorWallet) => {
   const provider = new AnchorProvider(connection, wallet, {
     commitment: "confirmed",
   });
@@ -25,7 +27,7 @@ export const getMasterAddress = async () => {
   )[0];
 };
 
-export const getLotteryAddress = async (id: any) => {
+export const getLotteryAddress = async (id: number | BN) => {
   return (
     await PublicKey.findProgramAddress(
       [Buffer.from(LOTTERY_SEED), new BN(id).toArrayLike(Buffer, "le", 4)],
@@ -34,7 +36,7 @@ export const getLotteryAddress = async (id: any) => {
   )[0];
 };
 
-export const getTicketAddress = async (lotteryPk: any, id: any) => {
+export const getTicketAddress = async (lotteryPk: PublicKey, id: number | BN) => {
   return (
     await PublicKey.findProgramAddress(
       [
@@ -48,8 +50,8 @@ export const getTicketAddress = async (lotteryPk: any, id: any) => {
 };
 
 // Return the lastTicket ID and multiply the ticket price and convert LAMPORTS PER SOL and convert it to String
-export const getTotalPrize = (lottery: any) => {
-  return new BN(lottery.lastTicketId)
+export const getTotalPrize = (lottery: LotteryAccount) => {
+  return new BN(lottery.lastTicketNumber)
     .mul(lottery.ticketPrice)
     .div(new BN(LAMPORTS_PER_SOL))
     .toString();

@@ -30,91 +30,88 @@ export default function Home() {
 
   if (!isInitialized)
     return (
-      <div>
-        <p>Lottery: {lotteryId}</p>
-        {connected ? (
-          <>
-            <button onClick={initMaster}> Initialize Master</button>
-          </>
-        ) : (
-          <>
+      <div className="min-h-screen flex justify-center items-center bg-gray-900 text-white">
+        <div className="text-center">
+          <p className="text-xl font-semibold mb-4">Lottery ID: {lotteryId}</p>
+          {connected ? (
+            <button
+              onClick={initMaster}
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+            >
+              Initialize Master
+            </button>
+          ) : (
             <WalletMultiButton />
-          </>
-        )}
+          )}
+        </div>
       </div>
     );
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col bg-gray-900 text-white">
       <Navbar />
-      <p>Lottery Id : {lotteryId}</p>
-      <p>Lottery Pot: {lotteryPot}</p>
-      {!isFinished ? <>Live</> : <>Closed</>}
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="md:w-1/2 w-full bg-gray-800 border border-white rounded-lg p-6">
+          <p className="text-lg mb-4">
+            <span className="font-bold">Lottery ID:</span> {lotteryId}
+          </p>
+          <p className="text-lg mb-4">
+            <span className="font-bold">Lottery Pot:</span> {lotteryPot}
+          </p>
 
-      {!isFinished ? (
-        <h5 className="text-center my-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-          Lottery {lotteryId} is live, join now!
-        </h5>
-      ) : (
-        <h5 className="text-center my-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-          WAIT TILL NEXT Lottery!
-        </h5>
-      )}
-
-      <p>Other options</p>
-      {connected ? (
-        <>
-          {!isFinished && (
-            <div>
-              <button
-                onClick={buyTicket}
-                type="button"
-                className="w-40 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              >
-                Enter
-              </button>
-            </div>
+          {!isFinished ? (
+            <h5 className="text-center my-4 text-3xl font-bold text-green-400">
+              Lottery {lotteryId} is live, join now!
+            </h5>
+          ) : (
+            <h5 className="text-center my-4 text-3xl font-bold text-red-500">
+              Lottery Closed! Wait for the next one.
+            </h5>
           )}
 
-          {isLotteryAuthority && !isFinished && (
-            <div>
-              <button
-                onClick={pickWinner}
-                type="button"
-                className="w-40 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              >
-                Pick Winner
-              </button>
-            </div>
-          )}
+          <div className="mt-6 flex flex-col items-center space-y-4">
+            {connected ? (
+              <>
+                {!isFinished && (
+                  <button
+                    onClick={buyTicket}
+                    className="w-40 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg"
+                  >
+                    Buy Ticket
+                  </button>
+                )}
 
-          {canClaim && (
-            <div>
-              <button
-                onClick={claimPrize}
-                type="button"
-                className="w-40 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              >
-                Claim prize
-              </button>
-            </div>
-          )}
+                {isLotteryAuthority && !isFinished && (
+                  <button
+                    onClick={pickWinner}
+                    className="w-40 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg"
+                  >
+                    Pick Winner
+                  </button>
+                )}
 
-          <div>
-            <button
-              onClick={createLottery}
-              type="button"
-              className="w-40 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-            >
-              Create lottery
-            </button>
+                {canClaim && (
+                  <button
+                    onClick={claimPrize}
+                    className="w-40 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2.5 rounded-lg"
+                  >
+                    Claim Prize
+                  </button>
+                )}
+
+                <button
+                  onClick={createLottery}
+                  className="w-40 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg"
+                >
+                  Create Lottery
+                </button>
+              </>
+            ) : (
+              <WalletMultiButton />
+            )}
           </div>
-        </>
-      ) : (
-        <div className="flex gap-4 md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <WalletMultiButton />
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -14,7 +14,7 @@ export const shortenPk = (pk: PublicKey | string, chars: number = 5): string => 
 };
 
 // Function to confirm a transaction
-export const confirmTx = async (txHash: any, connection: Connection): Promise<void> => {
+export const confirmTx = async (txHash: string, connection: Connection): Promise<void> => {
   const blockHashInfo = await connection.getLatestBlockhash();
   await connection.confirmTransaction({
     blockhash: blockHashInfo.blockhash,
