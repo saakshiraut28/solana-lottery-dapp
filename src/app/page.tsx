@@ -30,27 +30,32 @@ export default function Home() {
 
   if (!isInitialized)
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-900 text-white">
-        <div className="text-center">
-          <p className="text-xl font-semibold mb-4">Lottery ID: {lotteryId}</p>
-          {connected ? (
-            <button
-              onClick={initMaster}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
-            >
-              Initialize Master
-            </button>
-          ) : (
-            <WalletMultiButton />
-          )}
+      <>
+        <Navbar />
+        <div className="min-h-screen flex justify-center items-center text-black font-main">
+          <div className=" border -mt-4 px-8 py-4 text-center bg-white opacity-75">
+            <p className="text-xl font-semibold mb-4">
+              Lottery ID: {lotteryId}
+            </p>
+            {connected ? (
+              <button
+                onClick={initMaster}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+              >
+                Initialize Master
+              </button>
+            ) : (
+              <WalletMultiButton />
+            )}
+          </div>
         </div>
-      </div>
+      </>
     );
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-900 text-white">
+    <div className="min-h-screen flex flex-col text-black">
       <Navbar />
-      <div className="flex flex-col items-center justify-center py-12">
+      <div className="flex flex-col items-center justify-center py-12 opacity-75 font-main">
         <div className="md:w-1/2 w-full bg-gray-800 border border-white rounded-lg p-6">
           <p className="text-lg mb-4">
             <span className="font-bold">Lottery ID:</span> {lotteryId}
@@ -90,19 +95,23 @@ export default function Home() {
                   </button>
                 )}
 
-                <button
-                  onClick={claimPrize}
-                  className="w-40 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2.5 rounded-lg"
-                >
-                  Claim Prize
-                </button>
+                {canClaim && (
+                  <button
+                    onClick={claimPrize}
+                    className="w-40 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2.5 rounded-lg"
+                  >
+                    Claim Prize
+                  </button>
+                )}
 
-                <button
-                  onClick={createLottery}
-                  className="w-40 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg"
-                >
-                  Create Lottery
-                </button>
+                {!isFinished && (
+                  <button
+                    onClick={createLottery}
+                    className="w-40 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg"
+                  >
+                    Create Lottery
+                  </button>
+                )}
               </>
             ) : (
               <WalletMultiButton />

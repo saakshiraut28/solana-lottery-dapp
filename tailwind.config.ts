@@ -1,3 +1,4 @@
+import { url } from "inspector";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -11,9 +12,10 @@ const config: Config = {
       'main': ['Righteous', 'sans-serif'],
     },
     extend: {
+      backgroundImage: {
+        'garden-image': "url('./src/app/assets/gardenimg.png')",
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
       },
     },
   },
