@@ -56,7 +56,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col text-black">
       <Navbar />
       <div className="flex flex-col items-center justify-center py-12 opacity-75 font-main">
-        <div className="md:w-1/2 w-full bg-gray-800 border border-white rounded-lg p-6">
+        <div className="md:w-1/2 w-full  border border-white rounded-lg p-6">
           <p className="text-lg mb-4">
             <span className="font-bold">Lottery ID:</span> {lotteryId}
           </p>
