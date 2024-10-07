@@ -251,25 +251,48 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
   };
 
   const claimPrize = async () => {
-    if (!lotteryAddress || !wallet?.publicKey) {
-      console.log("Missing lotteryAddress or wallet public key");
+    if (!lotteryAddress || !wallet?.publicKey || !lottery) {
+      console.log("Missing lotteryAddress, wallet public key, or lottery data");
       return;
     }
+
+    if (!winnerId) {
+      console.log("No winning ticket found for this user");
+      return;
+    }
+  
     try {
+      console.log("Attempting to claim prize for lottery:", lotteryId);
+      console.log("Winner ID:", winnerId);
+
+      const ticketAddress = await getTicketAddress(lotteryAddress, winnerId);
+      console.log("Ticket address:", ticketAddress.toString());
+  
       const txHash = await program?.methods
-        .claimPrize(lotteryId)
+        .claimPrize() // Remove lotteryId if it's not needed in the contract method
         .accounts({
           lottery: lotteryAddress,
-          ticket: await getTicketAddress(lotteryAddress, winnerId),
-          authority: wallet?.publicKey,
+          ticket: ticketAddress,
+          authority: wallet.publicKey,
           systemProgram: SystemProgram.programId,
         })
         .rpc();
-      if (txHash) await confirmTx(txHash, connection);
-      updateState();
-      console.log("Prize claimed ");
+  
+      console.log("Transaction hash:", txHash);
+
+      if (txHash) {
+        await confirmTx(txHash, connection);
+        console.log("Transaction confirmed");
+      }
+
+      await updateState();
+      console.log("Prize claimed successfully");
     } catch (err) {
-      console.log("Hum : Claim prize error in it");
+      console.error("Error claiming prize:", err);
+      if (err instanceof Error) {
+        console.error("Error message:", err.message);
+        console.error("Error stack:", err.stack);
+      }
     }
   };
 

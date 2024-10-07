@@ -90,14 +90,12 @@ export default function Home() {
                   </button>
                 )}
 
-                {canClaim && (
-                  <button
-                    onClick={claimPrize}
-                    className="w-40 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2.5 rounded-lg"
-                  >
-                    Claim Prize
-                  </button>
-                )}
+                <button
+                  onClick={claimPrize}
+                  className="w-40 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2.5 rounded-lg"
+                >
+                  Claim Prize
+                </button>
 
                 <button
                   onClick={createLottery}
