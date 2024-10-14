@@ -1,4 +1,5 @@
 /** @format */
+
 "use client";
 import React, {
   createContext,
@@ -82,6 +83,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
   const [lottery, setLottery] = useState<LotteryAccount | undefined | null>();
   const [lotteryAddress, setLotteryAddress] = useState<PublicKey | null>(null);
   const [winnerId, setWinnerId] = useState<number | null>(null);
+  const [canClaim, setCanClaim] = useState<boolean>(false);
 
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
@@ -115,38 +117,51 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
         console.log("Master account initialized");
 
         // Get user's tickets for current lottery
-        const userTickets = await connection.getProgramAccounts(
-          program.programId,
-          {
-            filters: [
-              {
-                memcmp: {
-                  offset: 12,
-                  bytes: bs58.encode(
-                    new BN(lotteryId).toArrayLike(Buffer, "le", 4)
-                  ),
-                },
-              },
-              {
-                memcmp: {
-                  offset: 16,
-                  bytes: wallet.publicKey.toBase58(),
-                },
-              },
-            ],
-          }
-        );
+        if (!wallet?.publicKey) return;
 
-        const userWin = userTickets.some(
-          (t: { pubkey: PublicKey; account: AccountInfo<Buffer> }) => {
-            return t.account.data.readUInt32LE(0) === lottery.winnerId;
-          }
-        );
+        if (lotteryAddress) {
+          const userTickets = await connection.getProgramAccounts(
+            program.programId,
+            {
+              filters: [
+                {
+                  memcmp: {
+                    offset: 8, // Adjust this offset if needed
+                    bytes: bs58.encode(
+                      new BN(lotteryId).toArrayLike(Buffer, "le", 4)
+                    ),
+                  },
+                },
+                {
+                  memcmp: {
+                    offset: 12, // Adjust this offset if needed
+                    bytes: wallet.publicKey.toBase58(),
+                  },
+                },
+              ],
+            }
+          );
 
-        if (userWin) {
-          setWinnerId(lottery.winnerId);
-        } else {
-          setWinnerId(null);
+          console.log("User tickets:", userTickets);
+
+          // Gotta work on this thing.
+
+          // const userWin = userTickets.some(
+          //   (t) => t.account.id === lottery.winnerId
+          // );
+
+          const userWin = true;
+
+          console.log("User won:", userWin);
+
+          if (userWin) {
+            setWinnerId(lottery.winnerId);
+            setCanClaim(!lottery.claimed);
+          } else {
+            setWinnerId(null);
+            setCanClaim(false);
+          }
+          console.log("Can claim:", !lottery.claimed && userWin);
         }
       }
     } catch (err) {
@@ -260,16 +275,16 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
       console.log("No winning ticket found for this user");
       return;
     }
-  
+
     try {
       console.log("Attempting to claim prize for lottery:", lotteryId);
       console.log("Winner ID:", winnerId);
 
       const ticketAddress = await getTicketAddress(lotteryAddress, winnerId);
       console.log("Ticket address:", ticketAddress.toString());
-  
+
       const txHash = await program?.methods
-        .claimPrize() // Remove lotteryId if it's not needed in the contract method
+        .claimPrize(lotteryId, winnerId) // Remove lotteryId if it's not needed in the contract method
         .accounts({
           lottery: lotteryAddress,
           ticket: ticketAddress,
@@ -277,7 +292,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
           systemProgram: SystemProgram.programId,
         })
         .rpc();
-  
+
       console.log("Transaction hash:", txHash);
 
       if (txHash) {
@@ -332,7 +347,7 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
         buyTicket,
         pickWinner,
         isFinished: lottery ? !!lottery.winnerId : false,
-        canClaim: lottery ? !lottery.claimed && !!winnerId : false,
+        canClaim,
         claimPrize,
       }}
     >

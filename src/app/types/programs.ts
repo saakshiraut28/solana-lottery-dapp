@@ -1,4 +1,4 @@
-import { Program, Idl } from "@coral-xyz/anchor";
+import { Program, Idl, AccountNamespace } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import { LotteryAccount, MasterAccount, TicketAccount } from "./accounts";
 
@@ -12,8 +12,8 @@ export interface LotteryProgramMethodsHelper {
     signature: () => Promise<string>;
 }
 
-// Keep the accounts interface as-is
-export interface LotteryProgramAccounts {
+// Modify the accounts interface to include the index signature
+export interface LotteryProgramAccounts extends AccountNamespace<Idl> {
     lottery: {
         fetch: (address: PublicKey) => Promise<LotteryAccount>;
     };
@@ -23,6 +23,7 @@ export interface LotteryProgramAccounts {
     ticket: {
         fetch: (address: PublicKey) => Promise<TicketAccount>;
     };
+    [key: string]: any;  // Index signature to satisfy AccountNamespace
 }
 
 // Extend Program<Idl> without modifying methods
@@ -30,3 +31,4 @@ export interface LotteryProgram extends Program<Idl> {
     account: LotteryProgramAccounts;
     customMethods: LotteryProgramMethodsHelper;  // Add custom methods under a different property
 }
+
