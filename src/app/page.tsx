@@ -34,26 +34,24 @@ export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Ensure the component is mounted before rendering certain elements
     setIsMounted(true);
   }, []);
 
   if (!isInitialized) {
     return (
       <>
-        <Navbar />
-        <div className="min-h-screen flex justify-center items-center text-black font-main">
-          <div className="border -mt-4 px-8 py-4 text-center bg-white opacity-75">
-            <p className="text-xl font-semibold mb-4">
+        <div className="flex justify-center items-center min-h-screen font-main text-black">
+          <div className="bg-white opacity-75 -mt-4 px-8 py-4 border text-center">
+            <p className="mb-4 font-semibold text-xl">
               Lottery ID: {lotteryId}
             </p>
             {connected ? (
-              <div
+              <button
                 onClick={initMaster}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+                className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg font-medium text-white"
               >
                 Initialize Master
-              </div>
+              </button>
             ) : (
               <WalletMultiButton />
             )}
@@ -67,61 +65,61 @@ export default function Home() {
     <>
       <Navbar />
       <>
-        <div className="flex flex-col items-center justify-center py-12  font-main">
-          <div className="md:w-1/2 w-full border border-white rounded-lg p-6 bg-white opacity-75">
-            <p className="text-lg mb-4">
+        <div className="flex flex-col justify-center items-center py-12 font-main">
+          <div className="border-white bg-white opacity-75 p-6 border rounded-lg w-full md:w-1/2">
+            <p className="mb-4 text-lg">
               <span className="font-bold">Lottery ID:</span> {lotteryId}
             </p>
-            <p className="text-lg mb-4">
+            <p className="mb-4 text-lg">
               <span className="font-bold">Lottery Pot:</span> {lotteryPot}
             </p>
 
             {!isFinished ? (
-              <h5 className="text-center my-4 text-3xl font-bold text-green-400">
+              <h5 className="my-4 font-bold text-3xl text-center text-green-400">
                 Lottery {lotteryId} is live, join now!
               </h5>
             ) : (
-              <h5 className="text-center my-4 text-3xl font-bold text-red-500">
+              <h5 className="my-4 font-bold text-3xl text-center text-red-500">
                 Lottery Closed! Wait for the next one.
               </h5>
             )}
 
-            <div className="mt-6 flex flex-col items-center space-y-4">
+            <div className="flex flex-col items-center space-y-4 mt-6">
               {connected ? (
                 <>
                   {!isFinished && (
-                    <div
+                    <button
                       onClick={buyTicket}
-                      className="w-40 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg"
+                      className="bg-blue-600 hover:bg-blue-700 py-2.5 rounded-lg w-40 font-medium text-white"
                     >
                       Buy Ticket
-                    </div>
+                    </button>
                   )}
 
                   {isLotteryAuthority && !isFinished && (
-                    <div
+                    <button
                       onClick={pickWinner}
-                      className="w-40 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg"
+                      className="bg-green-600 hover:bg-green-700 py-2.5 rounded-lg w-40 font-medium text-white"
                     >
                       Pick Winner
-                    </div>
+                    </button>
                   )}
 
                   {canClaim && (
-                    <div
+                    <button
                       onClick={claimPrize}
-                      className="w-40 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2.5 rounded-lg"
+                      className="bg-yellow-500 hover:bg-yellow-600 py-2.5 rounded-lg w-40 font-medium text-white"
                     >
                       Claim Prize
-                    </div>
+                    </button>
                   )}
 
-                  <div
+                  <button
                     onClick={createLottery}
-                    className="w-40 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg"
+                    className="bg-purple-600 hover:bg-purple-700 py-2.5 rounded-lg w-40 font-medium text-white"
                   >
                     Create Lottery
-                  </div>
+                  </button>
                 </>
               ) : (
                 isMounted && <WalletMultiButton />

@@ -7,7 +7,7 @@
 
 
 export type LotteryProgram = {
-    "address": "5kBJdFooGFeNmfaLRm4Xx9Q8E68JFk2Ygh6Vd7QiL4pS",
+    "address": "AuDdYgpMpYcMYqZW4jR22xAzDaYipHGMDPxdKYvJdX92",
     "metadata": {
         "name": "lotteryProgram",
         "version": "0.1.0",

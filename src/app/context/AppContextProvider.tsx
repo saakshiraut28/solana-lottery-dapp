@@ -146,11 +146,15 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
 
           // Gotta work on this thing.
 
-          // const userWin = userTickets.some(
-          //   (t) => t.account.id === lottery.winnerId
-          // );
+           const userWin = userTickets.some(
+             (t) => {const ticketData = program.coder.accounts.decode(
+              'TicketAccount', // Replace with your actual account name
+              t.account.data
+          );
+          return ticketData.id === lottery.winnerId;}
+         );
 
-          const userWin = true;
+       
 
           console.log("User won:", userWin);
 

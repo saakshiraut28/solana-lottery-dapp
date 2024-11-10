@@ -13,6 +13,7 @@ const WalletDependentButtons: React.FC = () => {
     isLotteryAuthority,
     pickWinner,
     createLottery,
+    
   } = useAppContext();
 
   if (!connected) return null;
@@ -22,7 +23,7 @@ const WalletDependentButtons: React.FC = () => {
       {!isFinished && (
         <button
           onClick={buyTicket}
-          className="w-40 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg"
+          className="bg-blue-600 hover:bg-blue-700 py-2.5 rounded-lg w-40 font-medium text-white"
         >
           Buy Ticket
         </button>
@@ -31,7 +32,7 @@ const WalletDependentButtons: React.FC = () => {
       {isLotteryAuthority && !isFinished && (
         <button
           onClick={pickWinner}
-          className="w-40 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg"
+          className="bg-green-600 hover:bg-green-700 py-2.5 rounded-lg w-40 font-medium text-white"
         >
           Pick Winner
         </button>
@@ -40,7 +41,7 @@ const WalletDependentButtons: React.FC = () => {
       {!canClaim && (
         <button
           onClick={claimPrize}
-          className="w-40 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2.5 rounded-lg"
+          className="bg-yellow-500 hover:bg-yellow-600 py-2.5 rounded-lg w-40 font-medium text-white"
         >
           Claim Prize
         </button>
@@ -49,7 +50,7 @@ const WalletDependentButtons: React.FC = () => {
       {!isFinished && (
         <button
           onClick={createLottery}
-          className="w-40 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg"
+          className="bg-purple-600 hover:bg-purple-700 py-2.5 rounded-lg w-40 font-medium text-white"
         >
           Create Lottery
         </button>
