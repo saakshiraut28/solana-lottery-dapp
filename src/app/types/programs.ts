@@ -1,3 +1,4 @@
+/* eslint-enable @typescript-eslint/no-explicit-any */
 import { Program, Idl, AccountNamespace } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import { LotteryAccount, MasterAccount, TicketAccount } from "./accounts";
@@ -23,7 +24,7 @@ export interface LotteryProgramAccounts extends AccountNamespace<Idl> {
     ticket: {
         fetch: (address: PublicKey) => Promise<TicketAccount>;
     };
-    [key: string]: any;  // Index signature to satisfy AccountNamespace
+    [key: string]: any;  // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 // Extend Program<Idl> without modifying methods
@@ -31,4 +32,3 @@ export interface LotteryProgram extends Program<Idl> {
     account: LotteryProgramAccounts;
     customMethods: LotteryProgramMethodsHelper;  // Add custom methods under a different property
 }
-

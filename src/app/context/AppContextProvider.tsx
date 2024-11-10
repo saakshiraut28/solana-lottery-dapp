@@ -22,7 +22,6 @@ import {
 import { BN } from "@coral-xyz/anchor";
 import { LotteryProgram } from "../utils/LotteryProgramType";
 import {
-  AccountInfo,
   PublicKey,
   SystemProgram,
   LAMPORTS_PER_SOL,
